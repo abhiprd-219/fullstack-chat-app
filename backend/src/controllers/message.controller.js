@@ -50,20 +50,20 @@ export const sendMessage = async (req, res) => {
       senderId,
       receiverId,
       text,
-      image: imageUrl || null,  // Ensure `image` is handled correctly
+      image: imageUrl || null,  
     });
 
     await newMessage.save();
 
     const receiverSocketId = getReceiverSocketId(receiverId);
-    const senderSocketId = getReceiverSocketId(senderId); // Ensure sender gets the message too
+    const senderSocketId = getReceiverSocketId(senderId); //  sender gets the message too
 
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
     if (senderSocketId) {
-      io.to(senderSocketId).emit("newMessage", newMessage); // Ensure sender sees their message instantly
+      io.to(senderSocketId).emit("newMessage", newMessage); // sender sees their message instantly
     }
 
     res.status(201).json(newMessage);
