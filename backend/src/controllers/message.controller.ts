@@ -1,6 +1,6 @@
-import User from "../models/user.model.js";
-import Message from "../models/message.model.js";
-import { getReceiverSocketId, io } from "../lib/socket.js";
+import User from "../models/user.model";
+import Message from "../models/message.model";
+import { getReceiverSocketId, io } from "../lib/socket";
 
 export const getUsersForSidebar = async (req, res) => {
   try {
