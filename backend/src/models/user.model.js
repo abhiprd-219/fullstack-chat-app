@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePic: {
       type: String,
-      default: "",
+      default: "https://w0.peakpx.com/wallpaper/909/574/HD-wallpaper-avengers-2-age-of-ultron-captain-america-hulk-iron-man-thor-thumbnail.jpg",
     },
   },
   { timestamps: true }
