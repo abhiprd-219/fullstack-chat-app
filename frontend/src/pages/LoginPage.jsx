@@ -17,7 +17,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
+    <div className="h-screen flex items-center justify-center bg-gray-100 px-4">
       {/* Form Card */}
       <div className="w-full max-w-md bg-white p-6 sm:p-12 rounded-xl shadow-lg">
         {/* Logo */}

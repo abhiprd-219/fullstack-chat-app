@@ -14,22 +14,21 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center justify-center gap-2.5 hover:opacity-80 transition-all">
-              {/* <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-primary" />
-              </div> */}
-              <h1 className="text-lg font-bold">Baat Cheet</h1>
+              <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center">
+                <img
+                  src="https://w0.peakpx.com/wallpaper/1014/777/HD-wallpaper-avengers-2-age-of-ultron-black-widow-captain-america-hulk-iron-man-marvel-thor-war-thumbnail.jpg"
+                  alt="Avengers Logo"
+                  className="w-full h-full"
+                />
+              </div>
+
+              <h1 className="text-lg font-bold">Avengers Ke Sath Baat-Cheet App </h1>
+              
             </Link>
           </div>
 
           <div className="flex items-center gap-2">
-            <Link
-              to={"/settings"}
-              // className={`
-              // btn btn-sm gap-2 transition-colors
-              
-              // `}
-            >
-            </Link>
+
 
             {authUser && (
               <>

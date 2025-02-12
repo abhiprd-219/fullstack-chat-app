@@ -1,6 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
-const messageSchema = new mongoose.Schema(
+// Define an interface for the Message document
+export interface IMessage extends Document {
+  senderId: mongoose.Types.ObjectId;
+  receiverId: mongoose.Types.ObjectId;
+  text?: string;
+  image?: string;
+}
+
+// Define the Message schema
+const messageSchema: Schema<IMessage> = new mongoose.Schema(
   {
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +31,7 @@ const messageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Message = mongoose.model("Message", messageSchema);
+// Create the Message model
+const Message: Model<IMessage> = mongoose.model<IMessage>("Message", messageSchema);
 
 export default Message;
