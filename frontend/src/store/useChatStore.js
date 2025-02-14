@@ -33,6 +33,7 @@ export const useChatStore = create((set, get) => ({
       set({ isMessagesLoading: false });
     }
   },
+
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
@@ -42,6 +43,27 @@ export const useChatStore = create((set, get) => ({
       toast.error(error.response.data.message);
     }
   },
+
+
+  markAllMessagesAsSeen: async () => {
+    const { selectedUser, messages } = get();
+    try {
+      // API call to mark all messages as seen
+      await axiosInstance.put(`/messages/mark-seen/${selectedUser._id}`);
+  
+      // Update the state locally after marking as seen
+      const updatedMessages = messages.map((message) =>
+        message.seen ? message : { ...message, seen: true }
+      );
+  
+      set({ messages: updatedMessages });
+      toast.success("All messages marked as seen");
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to mark messages as seen");
+    }
+  },
+  
+  
 
   subscribeToMessages: () => {
     const { selectedUser } = get();
@@ -66,3 +88,6 @@ export const useChatStore = create((set, get) => ({
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));
+
+
+

@@ -15,15 +15,26 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
+    markAllMessagesAsSeen,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
+  const handleMarkAllAsSeen = async () => {
+    try {
+      await markAllMessagesAsSeen();
+    } catch (error) {
+      console.error("Failed to mark messages as seen", error);
+    }
+  };
+
+  const unseenMessageCount = messages.filter(
+    (message) => !message.seen && message.senderId !== authUser._id
+  ).length;
+
   useEffect(() => {
     getMessages(selectedUser._id);
-
     subscribeToMessages();
-
     return () => unsubscribeFromMessages();
   }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
@@ -47,6 +58,18 @@ const ChatContainer = () => {
     <div className="flex-1 flex flex-col overflow-auto">
       <ChatHeader />
 
+      <div className="p-4 border-b flex justify-between items-center">
+        <h2 className="text-lg font-semibold">{selectedUser.name}</h2>
+        {unseenMessageCount > 0 && (
+          <button
+            onClick={handleMarkAllAsSeen}
+            className="text-sm bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Mark All as Seen
+          </button>
+        )}
+      </div>
+
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
@@ -54,7 +77,7 @@ const ChatContainer = () => {
             className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
-            <div className=" chat-image avatar">
+            <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
                   src={
@@ -81,6 +104,11 @@ const ChatContainer = () => {
               )}
               {message.text && <p>{message.text}</p>}
             </div>
+            <div className="chat-footer">
+              <span className="text-xs opacity-50">
+                {message.seen ? "Seen" : "Not Seen"}
+              </span>
+            </div>
           </div>
         ))}
       </div>
@@ -89,4 +117,5 @@ const ChatContainer = () => {
     </div>
   );
 };
+
 export default ChatContainer;

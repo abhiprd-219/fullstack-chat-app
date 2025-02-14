@@ -16,6 +16,7 @@ export const getUsersForSidebar = async (req, res) => {
 
 export const getMessages = async (req, res) => {
   try {
+
     const { id: userToChatId } = req.params;
     const myId = req.user._id;
 
@@ -33,6 +34,27 @@ export const getMessages = async (req, res) => {
   }
 };
 
+export const markMessagesAsSeen = async (req, res) => {
+  try {
+    const { id: userToChatId } = req.params; // The ID of the user whose messages are being marked as seen
+    const myId = req.user._id;
+
+    // Update all messages where the user is the receiver and the `seen` field is false
+    await Message.updateMany(
+      { senderId: userToChatId, receiverId: myId, seen: false },
+      { $set: { seen: true } }
+    );
+
+    res.status(200).json({ message: "All messages marked as seen successfully" });
+  } catch (error) {
+    console.error("Error in markMessagesAsSeen controller: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
 export const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
@@ -40,8 +62,8 @@ export const sendMessage = async (req, res) => {
     const senderId = req.user._id;
 
     let imageUrl;
+    // Uncomment this block if you're using image upload to Cloudinary
     // if (image) {
-    //   // Upload base64 image to cloudinary
     //   const uploadResponse = await cloudinary.uploader.upload(image);
     //   imageUrl = uploadResponse.secure_url;
     // }
@@ -50,20 +72,24 @@ export const sendMessage = async (req, res) => {
       senderId,
       receiverId,
       text,
-      image: imageUrl || null,  
+      image: imageUrl || null,
+      // Initialize the seen field to false for all new messages
     });
+
+    
 
     await newMessage.save();
 
+    // Notify receiver and sender via WebSocket
     const receiverSocketId = getReceiverSocketId(receiverId);
-    const senderSocketId = getReceiverSocketId(senderId); //  sender gets the message too
+    const senderSocketId = getReceiverSocketId(senderId);
 
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
     }
 
     if (senderSocketId) {
-      io.to(senderSocketId).emit("newMessage", newMessage); // sender sees their message instantly
+      io.to(senderSocketId).emit("newMessage", newMessage);
     }
 
     res.status(201).json(newMessage);
@@ -72,3 +98,4 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
