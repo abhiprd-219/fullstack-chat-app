@@ -6,16 +6,21 @@ import { Users } from "lucide-react";
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, messages } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { onlineUsers, authUser } = useAuthStore(); // Assuming `authUser` is the authenticated user object
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
 
-  const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+  // Filter users based on contacts and online status
+  const filteredUsers = users.filter(user => {
+    // Show only users who are in the contact list of the current authenticated user
+    const isInContacts = authUser.contacts.includes(user._id);
+    
+    // If showOnlineOnly is true, filter users who are online and in the contact list
+    return isInContacts && (showOnlineOnly ? onlineUsers.includes(user._id) : true);
+  });
 
   // Get unseen messages count for each user
   const getUnseenMessageCountForUser = (userId) => {
@@ -83,7 +88,7 @@ const Sidebar = () => {
         })}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-zinc-500 py-4">Contact List</div>
         )}
       </div>
     </aside>

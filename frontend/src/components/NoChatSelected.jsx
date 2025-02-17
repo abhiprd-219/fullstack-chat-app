@@ -1,29 +1,65 @@
-import { MessageSquare } from "lucide-react";
+import { useEffect } from "react";
+import { useChatStore } from "../store/useChatStore";
+import { useAuthStore } from "../store/useAuthStore";
 
-const NoChatSelected = () => {
+const WelcomePage = () => {
+  const { getUsers, users, isUsersLoading } = useChatStore();
+  const { onlineUsers, addContact, authUser } = useAuthStore();
+
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+
+  const handleAddContact = (contactId) => {
+    addContact(contactId);
+  };
+
+  // Filter out users who are already in the logged-in user's contact list
+  const filteredUsers = users.filter((user) => {
+    return !authUser.contacts.includes(user._id);
+  });
+
   return (
-    <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
-      <div className="max-w-md text-center space-y-6">
-        {/* Icon Display */}
-        <div className="flex justify-center gap-4 mb-4">
-          <div className="relative">
-            <div
-              className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center
-             justify-center animate-bounce"
-            >
-              <MessageSquare className="w-8 h-8 text-primary " />
-            </div>
-          </div>
-        </div>
+    <div className="w-full flex flex-col items-center p-8 bg-base-100/50 h-screen">
+      <h2 className="text-2xl font-bold mb-6">Welcome to Marvel World!</h2>
 
-        {/* Welcome Text */}
-        <h2 className="text-2xl font-bold">Welcome to Chatty!</h2>
-        <p className="text-base-content/60">
-          Select a conversation from the sidebar to start chatting
-        </p>
+      <div className="w-full max-w-2xl space-y-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 150px)" }}>
+        {filteredUsers.map((user) => (
+          <div
+            key={user._id}
+            className="flex items-center justify-between bg-base-200 p-4 rounded-lg shadow-md"
+          >
+            <div className="flex items-center gap-4">
+              <img
+                src={user.profilePic || "/avatar.png"}
+                alt={user.fullName}
+                className="w-12 h-12 object-cover rounded-full"
+              />
+              <div className="text-left">
+                <div className="font-medium text-lg">{user.fullName}</div>
+                <div className="text-sm text-gray-500">
+                  {onlineUsers.includes(user._id) ? "Online" : "Offline"}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => handleAddContact(user._id)}
+              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors"
+              disabled={user.isContact} // Disable if already a contact
+            >
+              {user.isContact ? "Contact Added" : "Add Contact"}
+            </button>
+          </div>
+        ))}
       </div>
+
+      {filteredUsers.length === 0 && (
+        <div className="text-center text-gray-500 py-8">
+          No users available to add
+        </div>
+      )}
     </div>
   );
 };
 
-export default NoChatSelected;
+export default WelcomePage;
