@@ -14,6 +14,36 @@ export const useAuthStore = create((set, get) => ({
   onlineUsers: [],
   socket: null,
 
+
+
+  handleAddContact: async (userId) => {
+    try {
+      const res = await axiosInstance.post(`contacts/add-contact/${userId}`);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.error("Error in handleAddContact:", error);
+      toast.error(error.response?.data?.message || "Failed to add contact");
+    }
+  },
+
+  addContact: async (contactId) => {
+    try {
+      const res = await axiosInstance.post(`contacts/add-contact/${contactId}`);
+      toast.success(res.data.message);
+
+      // Optionally, update state for live contact additions
+      const updatedUsers = get().users?.map((user) =>
+        user._id === contactId ? { ...user, isContact: true } : user
+      );
+      if (updatedUsers) set({ users: updatedUsers });
+    } catch (error) {
+      console.error("Error in addContact:", error);
+      toast.error(error.response?.data?.message || "Failed to add contact.");
+    }
+  },
+
+
+
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");

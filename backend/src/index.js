@@ -8,6 +8,7 @@ import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 dotenv.config();
 
@@ -25,6 +26,9 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+console.log("Registering contact routes...");
+app.use("/api/contacts", contactRoutes);
+console.log("Contact routes loaded");
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

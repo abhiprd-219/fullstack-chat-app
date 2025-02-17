@@ -44,6 +44,10 @@ const ChatContainer = () => {
     }
   }, [messages]);
 
+  const formatTime = (date) => {
+    const options = { hour: '2-digit', minute: '2-digit' };
+    return new Date(date).toLocaleTimeString([], options); // Display in HH:mm format
+  };
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
@@ -106,7 +110,7 @@ const ChatContainer = () => {
             </div>
             <div className="chat-footer">
               <span className="text-xs opacity-50">
-                {message.seen ? "Seen" : "Not Seen"}
+                {message.seen ? "Seen" : "Not Seen"} 
               </span>
             </div>
           </div>
